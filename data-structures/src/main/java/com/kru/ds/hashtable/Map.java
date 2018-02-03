@@ -4,34 +4,44 @@
 package com.kru.ds.hashtable;
 
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
+ * 
  * @author <a href="mailto:krunalsabnis@gmail.com">Krunal Sabnis</a>
- * @param <K>
  *
+ * Custom Implementation of HashMap using custom HashTable implementation
+ * Hash Table uses LinkedList to handle collision - Separate Chaining method
+ *  Internal Hash Table expands by doubling its size when 7% full.
+ *  
+ * @param <K>
+ * @param <V>
  */
+
 @AllArgsConstructor
 @Data
 public class Map<K, V> {
 	private ArrayList<HashNode<K, V>> hashTable;
-	private int tableSize;
+	private int tableSize = 10;
 	private int currentSize;
 	
 	public Map() {
-		hashTable = new ArrayList<>();
 		currentSize = 0;
-		IntStream.range(0, 10).parallel().forEach(
-				x -> {
-					hashTable.add(null);
-				});
-		tableSize = hashTable.size();
+		init();
 	}
 
-	
+	private void init() {
+		hashTable = new ArrayList<>(tableSize);
+		for (int i = 0; i < tableSize; i++)
+			hashTable.add(null);
+		/*IntStream.range(1, tableSize).parallel().forEach(
+				x -> {
+					hashTable.add(null);
+				});*/
+	}
+
 	public boolean isEmpty() {
 		return currentSize == 0;
 	}
@@ -98,22 +108,49 @@ public class Map<K, V> {
 
 	}
 	
+	public void display() {
+		System.out.println("--------------------------------------");
+		for (int i = 0; i < tableSize; i++) {
+			HashNode<K, V> hashList = hashTable.get(i);
+			if (hashList == null) {
+				System.out.println(i + "| -> NULL");
+			} else {
+				StringBuilder sb = new StringBuilder(i + " |");
+				while(hashList != null) {
+					sb.append("-> Key : " + hashList.getKey());
+					hashList = hashList.getNext();
+				}
+				System.out.println(sb);
+			}
+			
+		}
+	}
+	
 	
 	private void growTableIfNeeded() {
-		if(1.0 * currentSize/tableSize >= 0.7) {
+		if (1.0 * currentSize/tableSize >= 0.7) {
 			// double the table size whenever 70% filled
 			tableSize = tableSize * 2;
-			System.out.println("expanded internal table to " + tableSize);
-			ArrayList<HashNode<K, V>> tempArray = new ArrayList<>(tableSize);
+			ArrayList<HashNode<K, V>> temp = new ArrayList<>(hashTable.size());
 			
-			// copy existing entries
-			for(int i = 0; i < tableSize; i++) {
-				if (i < hashTable.size())
-					tempArray.add(hashTable.get(i));
-				else
-					tempArray.add(null);
+			// copy to temp arrayList first
+			for(int i = 0; i  < hashTable.size(); i++) {
+				temp.add(hashTable.get(i));
 			}
-			hashTable = tempArray;
+			
+			System.out.println("expanding internal table to " + tableSize);
+			init();
+			
+			// for each entry in table
+			for(int i = 0; i < temp.size(); i++) {
+				HashNode<K, V> currentNode = temp.get(i);
+					//for each entry in HashNode List at each index
+				while(currentNode != null) {
+					add(currentNode.getKey(), currentNode.getValue());
+					currentNode = currentNode.getNext();
+				}
+			}
+			display();
 		}
 	}
 }

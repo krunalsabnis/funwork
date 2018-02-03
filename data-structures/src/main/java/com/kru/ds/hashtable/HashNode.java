@@ -7,8 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
+ * 
  * @author <a href="mailto:krunalsabnis@gmail.com">Krunal Sabnis</a>
  *
+ * To handle collision use open address or separate chaining method.
+ * Here is LinkedList to implement seperate chaining method.
+ * 
+ * @param <K>
+ * @param <V>
  */
 @Data
 @AllArgsConstructor
