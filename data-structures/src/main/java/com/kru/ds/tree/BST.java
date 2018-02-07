@@ -80,7 +80,7 @@ public class BST<T extends Comparable<T>> {
 				successor = successor.getLeft();
 			}
 			successor.setLeft(node.getLeft());
-			if (successor.getKey() != node.getRight().getKey())
+			if (successor.getKey().compareTo(node.getRight().getKey()) != 0)
 				successor.setRight(node.getRight());
 			if (node.isLeftChild())
 				node.getParent().setLeft(successor);
